@@ -30,6 +30,7 @@ function M.save_to_file(name, path)
         io.close(file)
         print_text("File successfully saved to " .. path)
     end
+    return path
 end
 
 function M.get_info()
