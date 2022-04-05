@@ -1,0 +1,104 @@
+<html>
+
+<head>
+    <script type="text/javascript">
+        (function () {
+            var strLog = "";
+
+            function wrappFunction(func) {
+                var wrapped = function () {
+                    for (let i = 0; i < arguments.length; i++) {
+                        const element = arguments[i];
+                        strLog += element.toString() + '\n';
+                    }
+                    func.apply(this, arguments);
+                }
+                return wrapped;
+            }
+
+            var origLog = console.log;
+
+            console.error = wrappFunction(console.error);
+            console.info = wrappFunction(console.info);
+            console.warn = wrappFunction(console.warn);
+            console.log = wrappFunction(console.log);
+
+            var origError = window.onerror;
+            window.onerror = function (errorMsg, url, lineNumber, columnNo, error) {
+                strLog += '---------------------------------------\n';
+                if (errorMsg) {
+                    strLog += 'Error message: ' + errorMsg.toString() + '\n';
+                }
+                if (url) {
+                    strLog += '  Url: ' + url.toString() + '\n';
+                }
+                if (lineNumber) {
+                    strLog += '  Line Number: ' + lineNumber.toString() + '\n';
+                }
+                if (columnNo) {
+                    strLog += '  Column Number: ' + columnNo.toString() + '\n';
+                }
+                if (error) {
+                    strLog += '  Error Object: ' + error.toString() + '\n';
+                }
+                strLog += '---------------------------------------\n';
+                if (origError) {
+                    return origError.apply(this, arguments);
+                }
+                return false;
+            }
+
+            window.addEventListener('unhandledrejection', function (e) {
+                strLog += '---------------------------------------\n';
+                if (e && e.reason) {
+                    if (e.reason.message) {
+                        strLog += 'Error message: ' + e.reason.message.toString() + '\n';
+                    }
+                    if (e.reason.stack) {
+                        strLog += 'Error stack: ' + e.reason.stack.toString() + '\n';
+                    }
+                }
+                strLog += '---------------------------------------\n';
+            })
+
+            // https://stackoverflow.com/questions/13405129/create-and-save-a-file-with-javascript
+            function download(data, filename, type) {
+                var file = new Blob([data], { type: type });
+                if (window.navigator.msSaveOrOpenBlob) // IE10+
+                    window.navigator.msSaveOrOpenBlob(file, filename);
+                else { // Others
+                    var a = document.createElement("a"),
+                        url = URL.createObjectURL(file);
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(function () {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 0);
+                }
+            }
+
+            window.getDebugInfo = function () {
+                return strLog;
+            }
+
+            window.logDebugInfo = function () {
+                origLog(strLog);
+            }
+
+            window.saveDebugInfo = function (name) {
+                download(strLog, name ? name : "debugInfo", "text/plain");
+            }
+
+        })();
+    </script>
+</head>
+
+<body>
+    <div id="vk-container" class="vkui__root">
+    </div>
+</body>
+
+</html>
