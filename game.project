@@ -5,12 +5,18 @@ main_collection = /example/example.collectionc
 shared_state = 1
 
 [display]
-width = 960
-height = 640
+width = 640
+height = 960
+high_dpi = 1
 
 [project]
 title = ShareLog
+dependencies#0 = https://github.com/britzl/defold-sharing/archive/refs/tags/4.1.0.zip
+dependencies#1 = https://github.com/andsve/dirtylarry/archive/master.zip
 
 [library]
 include_dirs = sharelog
+
+[android]
+debuggable = 1
 
