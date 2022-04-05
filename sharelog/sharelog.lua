@@ -8,6 +8,10 @@ local function print_text(message)
     end
 end
 
+---Save log to file. Return path string. For html return empty string.
+---@param name string *Optional* Name for file. Default `sharelog`
+---@param path string *Optional* Path to folder. Default `sys.get_save_file("sharelog", name)`
+---@return string
 function M.save_to_file(name, path)
     name = name or "sharelog"
     path = path or ""
@@ -23,17 +27,19 @@ function M.save_to_file(name, path)
             end
             path = path .. name .. ".txt"
         end
-        local logs = sharelog_private.get_log_string()
+        local log = sharelog_private.get_log_string()
         local file = io.open(path, "w+")
         io.output(file)
-        io.write(logs)
+        io.write(log)
         io.close(file)
         print_text("File successfully saved to " .. path)
     end
     return path
 end
 
-function M.get_info()
+---Return all log
+---@return string
+function M.get_log()
     if html5 then
         return html5.run("window.getDebugInfo()")
     else
@@ -41,9 +47,10 @@ function M.get_info()
     end
 end
 
+---Share text using share extention https://github.com/britzl/defold-sharing
 function M.share_text()
     if share then
-        local log = M.get_info()
+        local log = M.get_log()
         share.text(log)
         print_text("Text successfully saved")
     else
@@ -51,10 +58,12 @@ function M.share_text()
     end
 end
 
+---Share log to email
+---@param email string
 function M.share_to_email(email)
     assert(type(email) == "string", "Email must be string")
-    local log = M.get_info()
-    local link = "mailto:" .. email .. "?subject=ShareLogs&body=" .. log
+    local log = M.get_log()
+    local link = "mailto:" .. email .. "?subject=Sharelog&body=" .. log
     local success = sys.open_url(link)
     if success then
         print_text("Email was created")
@@ -63,6 +72,7 @@ function M.share_to_email(email)
     end
 end
 
+---Share file using share extention https://github.com/britzl/defold-sharing
 function M.share_file()
     if share then
         local path = M.save_to_file()
@@ -78,6 +88,7 @@ function M.share_file()
     end
 end
 
+---Check if share extention is available https://github.com/britzl/defold-sharing
 function M.is_share_work()
     return share ~= nil
 end

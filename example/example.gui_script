@@ -2,7 +2,7 @@ local dirtylarry = require("dirtylarry/dirtylarry")
 local sharelog = require("sharelog.sharelog")
 
 local function on_log_to_console(self)
-    local info = sharelog.get_info()
+    local info = sharelog.get_log()
     print("----------------------")
     print(info)
     print("----------------------")
