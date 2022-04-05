@@ -1,7 +1,15 @@
 local sharelog = require "sharelog.sharelog"
 
 function init(self)
-    sharelog.save_to_file()
+    -- sharelog.save_to_file()
+    pprint("Hello1")
+    timer.delay(1, false, function()
+        local str = sharelog_private.get_log_string()
+        pprint("length", #str)
+        pprint("length", str)
+        str = sharelog_private.get_log_string()
+        pprint("second", str)
+    end)
 end
 
 function final(self)

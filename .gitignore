@@ -8,3 +8,9 @@ Thumbs.db
 .project
 .cproject
 builtins
+/.defold-api
+/.vscode
+/_build
+.cache-loader
+node_modules
+package-lock.json
