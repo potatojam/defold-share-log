@@ -13,7 +13,7 @@ end
 function sharelog.get_log()
 end
 
----Share text using share extention https://github.com/britzl/defold-sharing
+---Share log as text using share extention https://github.com/britzl/defold-sharing
 function sharelog.share_text()
 end
 
@@ -22,11 +22,12 @@ end
 function sharelog.share_to_email(email)
 end
 
----Share file using share extention https://github.com/britzl/defold-sharing
+---Share log as file using share extention https://github.com/britzl/defold-sharing
 function sharelog.share_file()
 end
 
 ---Check if share extention is available https://github.com/britzl/defold-sharing
+---@return boolean
 function sharelog.is_share_work()
 end
 

@@ -58,7 +58,7 @@ function M.share_text()
     end
 end
 
----Share log to email
+---Share log as text to email
 ---@param email string
 function M.share_to_email(email)
     assert(type(email) == "string", "Email must be string")
@@ -72,7 +72,7 @@ function M.share_to_email(email)
     end
 end
 
----Share file using share extention https://github.com/britzl/defold-sharing
+---Share log as file using share extention https://github.com/britzl/defold-sharing
 function M.share_file()
     if share then
         local path = M.save_to_file()
@@ -89,6 +89,7 @@ function M.share_file()
 end
 
 ---Check if share extention is available https://github.com/britzl/defold-sharing
+---@return boolean
 function M.is_share_work()
     return share ~= nil
 end

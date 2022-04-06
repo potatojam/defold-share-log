@@ -35,7 +35,7 @@ static std::string stringLog;
 
 static void LogListener(dmLog::Severity severity, const char *type, const char *message)
 {
-    //dmLog::LOG_SEVERITY_USER_DEBUG
+    // dmLog::LOG_SEVERITY_USER_DEBUG
     stringLog = stringLog + message;
 }
 
