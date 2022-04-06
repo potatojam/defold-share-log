@@ -4,7 +4,7 @@
 
 You can use it in your own project by adding this project as a [Defold library dependency](http://www.defold.com/manuals/libraries/). Open your `game.project` file and in the dependencies field add **a link to the ZIP file of a [specific release](https://github.com/potatojam/defold-share-log/tags).**
 
-> &#x26a0;&#xfe0f; For some functions, you need to use the [share](https://github.com/britzl/defold-sharing) extension
+> &#x26a0;&#xfe0f; For some functions, you need to use the [share](https://github.com/britzl/defold-sharing) extension. https://github.com/britzl/defold-sharing
 
 ## Lua API
 
@@ -38,6 +38,10 @@ Share log to email where possible.
 ### `sharelog.share_text()`
 
 Share log as text using [share](https://github.com/britzl/defold-sharing) extension
+
+### `sharelog.share_file()`
+
+Share file as text using [share](https://github.com/britzl/defold-sharing) extension
 
 ### `sharelog.is_share_work()`
 
