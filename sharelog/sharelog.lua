@@ -16,7 +16,7 @@ function M.save_to_file(name, path)
     name = name or "sharelog"
     path = path or ""
     if html5 then
-        html5.run("window.saveDebugInfo(\"" .. name .. "\")")
+        html5.run("ShareLog.saveDebugInfo(\"" .. name .. "\")")
     else
         if path == "" then
             path = sys.get_save_file("sharelog", name) .. ".txt"
@@ -41,7 +41,7 @@ end
 ---@return string
 function M.get_log()
     if html5 then
-        return html5.run("window.getDebugInfo()")
+        return html5.run("ShareLog.getDebugInfo()")
     else
         return sharelog_private.get_log_string()
     end

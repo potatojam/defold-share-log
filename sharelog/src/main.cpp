@@ -4,10 +4,28 @@
 
 #include <dmsdk/sdk.h>
 
+#if defined(DM_RELEASE)
+static const bool is_release_version = true;
+#else
+static const bool is_release_version = false;
+#endif
+bool block_release_version = true;
+
 #ifdef DM_PLATFORM_HTML5
+
+extern "C"
+{
+    void ShareLog_Init();
+}
 
 static dmExtension::Result AppInitializeShareLog(dmExtension::AppParams *params)
 {
+    const char *brv_str = dmConfigFile::GetString(params->m_ConfigFile, "share_log.block_release_version", "true");
+    block_release_version = brv_str == "true" || brv_str == "1";
+    if (!block_release_version || !is_release_version)
+    {
+        ShareLog_Init();
+    }
     return dmExtension::RESULT_OK;
 }
 
@@ -31,17 +49,17 @@ static dmExtension::Result FinalizeShareLog(dmExtension::Params *params)
 #include <string>
 #include <dmsdk/dlib/log.h>
 
-static std::string stringLog;
+static std::string string_log;
 
 static void LogListener(dmLog::Severity severity, const char *type, const char *message)
 {
     // dmLog::LOG_SEVERITY_USER_DEBUG
-    stringLog = stringLog + message;
+    string_log = string_log + message;
 }
 
 static int GetShareLogString(lua_State *L)
 {
-    char *cstr = strcpy(new char[stringLog.length() + 1], stringLog.c_str());
+    char *cstr = strcpy(new char[string_log.length() + 1], string_log.c_str());
     lua_pushstring(L, cstr);
     return 1;
 }
@@ -65,8 +83,13 @@ static void LuaInit(lua_State *L)
 
 static dmExtension::Result AppInitializeShareLog(dmExtension::AppParams *params)
 {
-    stringLog = "";
-    dmLog::RegisterLogListener(&LogListener);
+    const char *brv_str = dmConfigFile::GetString(params->m_ConfigFile, "share_log.block_release_version", "true");
+    block_release_version = brv_str == "true" || brv_str == "1";
+    string_log = "";
+    if (!block_release_version || !is_release_version)
+    {
+        dmLog::RegisterLogListener(&LogListener);
+    }
     return dmExtension::RESULT_OK;
 }
 
@@ -78,7 +101,10 @@ static dmExtension::Result InitializeShareLog(dmExtension::Params *params)
 
 static dmExtension::Result AppFinalizeShareLog(dmExtension::AppParams *params)
 {
-    dmLog::UnregisterLogListener(&LogListener);
+    if (!block_release_version || !is_release_version)
+    {
+        dmLog::UnregisterLogListener(&LogListener);
+    }
     return dmExtension::RESULT_OK;
 }
 

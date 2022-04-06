@@ -5,61 +5,82 @@
         (function () {
             var strLog = "";
 
-            function wrappFunction(func) {
-                var wrapped = function () {
-                    for (let i = 0; i < arguments.length; i++) {
-                        const element = arguments[i];
-                        strLog += element.toString() + '\n';
-                    }
-                    func.apply(this, arguments);
-                }
-                return wrapped;
+            if (!window.ShareLog) {
+                window.ShareLog = {};
             }
+            var ShareLog = window.ShareLog
+            ShareLog.isIntialized = false;
 
-            var origLog = console.log;
+            ShareLog.subscribe = function () {
+                if (ShareLog.isIntialized) {
+                    return;
+                }
+                ShareLog.isIntialized = true;
 
-            console.error = wrappFunction(console.error);
-            console.info = wrappFunction(console.info);
-            console.warn = wrappFunction(console.warn);
-            console.log = wrappFunction(console.log);
+                var catch_promise_errors = true;
+                // {{#share_log.catch_promise_errors}}
+                catch_promise_errors = "{{{share_log.catch_promise_errors}}}" === "true" || "{{{share_log.catch_promise_errors}}}" === "1";
+                // {{/share_log.catch_promise_errors}}
 
-            var origError = window.onerror;
-            window.onerror = function (errorMsg, url, lineNumber, columnNo, error) {
-                strLog += '---------------------------------------\n';
-                if (errorMsg) {
-                    strLog += 'Error message: ' + errorMsg.toString() + '\n';
+                function wrappFunction(func) {
+                    var wrapped = function () {
+                        for (let i = 0; i < arguments.length; i++) {
+                            const element = arguments[i];
+                            strLog += element.toString() + '\n';
+                        }
+                        func.apply(this, arguments);
+                    }
+                    return wrapped;
                 }
-                if (url) {
-                    strLog += '  Url: ' + url.toString() + '\n';
+
+                var origLog = console.log;
+
+                console.error = wrappFunction(console.error);
+                console.info = wrappFunction(console.info);
+                console.warn = wrappFunction(console.warn);
+                console.log = wrappFunction(console.log);
+
+                var origError = window.onerror;
+                window.onerror = function (errorMsg, url, lineNumber, columnNo, error) {
+                    strLog += '---------------------------------------\n';
+                    if (errorMsg) {
+                        strLog += 'Error message: ' + errorMsg.toString() + '\n';
+                    }
+                    if (url) {
+                        strLog += '  Url: ' + url.toString() + '\n';
+                    }
+                    if (lineNumber) {
+                        strLog += '  Line Number: ' + lineNumber.toString() + '\n';
+                    }
+                    if (columnNo) {
+                        strLog += '  Column Number: ' + columnNo.toString() + '\n';
+                    }
+                    if (error) {
+                        strLog += '  Error Object: ' + error.toString() + '\n';
+                    }
+                    strLog += '---------------------------------------\n';
+                    if (origError) {
+                        return origError.apply(this, arguments);
+                    }
+                    return false;
                 }
-                if (lineNumber) {
-                    strLog += '  Line Number: ' + lineNumber.toString() + '\n';
+
+
+                if (catch_promise_errors) {
+                    window.addEventListener('unhandledrejection', function (e) {
+                        strLog += '---------------------------------------\n';
+                        if (e && e.reason) {
+                            if (e.reason.message) {
+                                strLog += 'Error message: ' + e.reason.message.toString() + '\n';
+                            }
+                            if (e.reason.stack) {
+                                strLog += 'Error stack: ' + e.reason.stack.toString() + '\n';
+                            }
+                        }
+                        strLog += '---------------------------------------\n';
+                    })
                 }
-                if (columnNo) {
-                    strLog += '  Column Number: ' + columnNo.toString() + '\n';
-                }
-                if (error) {
-                    strLog += '  Error Object: ' + error.toString() + '\n';
-                }
-                strLog += '---------------------------------------\n';
-                if (origError) {
-                    return origError.apply(this, arguments);
-                }
-                return false;
             }
-
-            window.addEventListener('unhandledrejection', function (e) {
-                strLog += '---------------------------------------\n';
-                if (e && e.reason) {
-                    if (e.reason.message) {
-                        strLog += 'Error message: ' + e.reason.message.toString() + '\n';
-                    }
-                    if (e.reason.stack) {
-                        strLog += 'Error stack: ' + e.reason.stack.toString() + '\n';
-                    }
-                }
-                strLog += '---------------------------------------\n';
-            })
 
             // https://stackoverflow.com/questions/13405129/create-and-save-a-file-with-javascript
             function download(data, filename, type) {
@@ -80,25 +101,29 @@
                 }
             }
 
-            window.getDebugInfo = function () {
+            ShareLog.getDebugInfo = function () {
                 return strLog;
             }
 
-            window.logDebugInfo = function () {
+            ShareLog.logDebugInfo = function () {
                 origLog(strLog);
             }
 
-            window.saveDebugInfo = function (name) {
+            ShareLog.saveDebugInfo = function (name) {
                 download(strLog, name ? name : "debugInfo", "text/plain");
+            }
+
+            var force_html5_init = false;
+            // {{#share_log.force_html5_init}}
+            force_html5_init = "{{{share_log.force_html5_init}}}" === "true" || "{{{share_log.force_html5_init}}}" === "1";
+            // {{/share_log.force_html5_init}}
+
+            if (force_html5_init) {
+                ShareLog.subscribe();
             }
 
         })();
     </script>
 </head>
-
-<body>
-    <div id="vk-container" class="vkui__root">
-    </div>
-</body>
 
 </html>

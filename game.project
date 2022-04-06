@@ -20,3 +20,8 @@ include_dirs = sharelog
 [android]
 debuggable = 1
 
+[share_log]
+block_release_version = true
+catch_promise_errors = true
+force_html5_init = false
+
