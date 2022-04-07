@@ -49,10 +49,13 @@ end
 
 ---Share text using share extention https://github.com/britzl/defold-sharing
 function M.share_text()
+    pprint(html5.run("ShareLog.isNavigatorAvailable()"))
     if share then
         local log = M.get_log()
         share.text(log)
         print_text("Text successfully saved")
+    elseif html5 and html5.run("ShareLog.isNavigatorAvailable()") then
+        html5.run("ShareLog.shareText()")
     else
         print_text("Share extention not active")
     end
@@ -83,6 +86,8 @@ function M.share_file()
         else
             print_text("File not removed. " .. err)
         end
+    elseif html5 and html5.run("ShareLog.isNavigatorAvailable()") then
+        html5.run("ShareLog.shareFile()")
     else
         print_text("Share extention not active")
     end

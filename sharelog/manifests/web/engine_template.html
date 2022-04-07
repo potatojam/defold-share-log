@@ -1,9 +1,9 @@
 <html>
 
 <head>
-    <script type="text/javascript">
+    <script type='text/javascript'>
         (function () {
-            var strLog = "";
+            var strLog = '';
 
             if (!window.ShareLog) {
                 window.ShareLog = {};
@@ -19,7 +19,7 @@
 
                 var catch_promise_errors = true;
                 // {{#share_log.catch_promise_errors}}
-                catch_promise_errors = "{{{share_log.catch_promise_errors}}}" === "true" || "{{{share_log.catch_promise_errors}}}" === "1";
+                catch_promise_errors = '{{{share_log.catch_promise_errors}}}' === 'true' || '{{{share_log.catch_promise_errors}}}' === '1';
                 // {{/share_log.catch_promise_errors}}
 
                 function wrappFunction(func) {
@@ -83,12 +83,12 @@
             }
 
             // https://stackoverflow.com/questions/13405129/create-and-save-a-file-with-javascript
-            function download(data, filename, type) {
-                var file = new Blob([data], { type: type });
+            function download(data, filename) {
+                var file = new Blob([data], { type: 'text/plain' });
                 if (window.navigator.msSaveOrOpenBlob) // IE10+
                     window.navigator.msSaveOrOpenBlob(file, filename);
                 else { // Others
-                    var a = document.createElement("a"),
+                    var a = document.createElement('a'),
                         url = URL.createObjectURL(file);
                     a.href = url;
                     a.download = filename;
@@ -101,6 +101,55 @@
                 }
             }
 
+            // https://stackoverflow.com/questions/8348139/detect-ios-version-less-than-5-with-javascript
+            function iOSversion() {
+                if (/iP(hone|od|ad)/.test(navigator.platform)) {
+                    // supports iOS 2.0 and later: <http://bit.ly/TJjs1V>
+                    var v = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
+                    return [parseInt(v[1], 10), parseInt(v[2], 10), parseInt(v[3] || 0, 10)];
+                }
+                return [0, 0, 0];
+            }
+
+            //https://stackoverflow.com/questions/2897619/using-html5-javascript-to-generate-and-save-a-file/4551467#4551467
+            //https://developer.apple.com/forums/thread/119017
+            function downloadIOS(data, filename) {
+                var ver = iOSversion();
+                if (ver && ver[0] <= 13) {
+                    // var uriContent = "data:application/octet-stream," + encodeURIComponent(data);
+                    // window.open(uriContent, 'neuesDokument');
+                    let a = document.createElement('a');
+                    a.href = "data:application/octet-stream," + encodeURIComponent(data);
+                    a.download = filename + '.txt';
+                    a.click();
+                } else {
+                    var file = new Blob([data], { type: 'text/plain' });
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        var popup = window.open();
+                        var link = document.createElement('a');
+                        link.setAttribute('href', reader.result);
+                        link.setAttribute('download', filename + '.txt');
+                        popup.document.body.appendChild(link);
+                        link.click();
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            function iOS() {
+                return [
+                    'iPad Simulator',
+                    'iPhone Simulator',
+                    'iPod Simulator',
+                    'iPad',
+                    'iPhone',
+                    'iPod'
+                ].includes(navigator.platform)
+                    // iPad on iOS 13 detection
+                    || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+            }
+
             ShareLog.getDebugInfo = function () {
                 return strLog;
             }
@@ -110,12 +159,47 @@
             }
 
             ShareLog.saveDebugInfo = function (name) {
-                download(strLog, name ? name : "debugInfo", "text/plain");
+                name = (name ? name : 'debugInfo')
+                if (iOS()) {
+                    downloadIOS(strLog, name)
+                } else {
+                    download(strLog, name);
+                }
+            }
+
+            ShareLog.isNavigatorAvailable = function () {
+                return navigator && navigator.share;
+            }
+
+            ShareLog.shareText = function () {
+                var shareData = {
+                    text: ShareLog.getDebugInfo()
+                }
+                try {
+                    navigator.share(shareData)
+                } catch (err) {
+                    console.log('Error: ' + err)
+                }
+            }
+
+            ShareLog.shareFile = function (name) {
+                name = (name ? name : 'debugInfo') + '.txt'
+                var shareData = {
+                    files: [new File([strLog], name, {
+                        type: 'text/plain'
+                    })],
+                    title: name
+                }
+                try {
+                    navigator.share(shareData)
+                } catch (err) {
+                    console.log('Error: ' + err)
+                }
             }
 
             var force_html5_init = false;
             // {{#share_log.force_html5_init}}
-            force_html5_init = "{{{share_log.force_html5_init}}}" === "true" || "{{{share_log.force_html5_init}}}" === "1";
+            force_html5_init = '{{{share_log.force_html5_init}}}' === 'true' || '{{{share_log.force_html5_init}}}' === '1';
             // {{/share_log.force_html5_init}}
 
             if (force_html5_init) {
