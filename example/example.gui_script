@@ -38,6 +38,10 @@ end
 function init(self)
     msg.post(".", "acquire_input_focus")
     self.count = 0
+    if not sharelog.is_share_work() then
+        gui.set_alpha(gui.get_node("btn_share_file/larrybutton"), 0)
+        gui.set_alpha(gui.get_node("btn_share_text/larrybutton"), 0)
+    end
 end
 
 function on_input(self, action_id, action)

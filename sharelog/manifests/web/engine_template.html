@@ -114,27 +114,32 @@
             //https://stackoverflow.com/questions/2897619/using-html5-javascript-to-generate-and-save-a-file/4551467#4551467
             //https://developer.apple.com/forums/thread/119017
             function downloadIOS(data, filename) {
-                var ver = iOSversion();
-                if (ver && ver[0] <= 13) {
-                    // var uriContent = "data:application/octet-stream," + encodeURIComponent(data);
-                    // window.open(uriContent, 'neuesDokument');
-                    let a = document.createElement('a');
-                    a.href = "data:application/octet-stream," + encodeURIComponent(data);
-                    a.download = filename + '.txt';
-                    a.click();
-                } else {
-                    var file = new Blob([data], { type: 'text/plain' });
-                    var reader = new FileReader();
-                    reader.onload = function () {
-                        var popup = window.open();
-                        var link = document.createElement('a');
-                        link.setAttribute('href', reader.result);
-                        link.setAttribute('download', filename + '.txt');
-                        popup.document.body.appendChild(link);
-                        link.click();
-                    }
-                    reader.readAsDataURL(file);
-                }
+                // var ver = iOSversion();
+                // if (ver && ver[0] <= 13) {
+                //     // var uriContent = "data:application/octet-stream," + encodeURIComponent(data);
+                //     // window.open(uriContent, 'neuesDokument');
+                //     let a = document.createElement('a');
+                //     a.href = "data:application/octet-stream," + encodeURIComponent(data);
+                //     a.download = filename + '.txt';
+                //     a.click();
+                // } else {
+                //     var file = new Blob([data], { type: 'text/plain' });
+                //     var reader = new FileReader();
+                //     reader.onload = function () {
+                //         var popup = window.open();
+                //         var link = document.createElement('a');
+                //         link.setAttribute('href', reader.result);
+                //         link.setAttribute('download', filename + '.txt');
+                //         popup.document.body.appendChild(link);
+                //         link.click();
+                //     }
+                //     reader.readAsDataURL(file);
+                // }
+
+                let a = document.createElement('a');
+                a.href = "data:application/octet-stream," + encodeURIComponent(data);
+                a.download = filename + '.txt';
+                a.click();
             }
 
             function iOS() {
@@ -165,6 +170,10 @@
                 } else {
                     download(strLog, name);
                 }
+            }
+
+            ShareLog.isNavigatorSupport = function (name) {
+                return navigator !== null && navigator !== undefined && navigator.share !== null && navigator.share !== undefined;
             }
 
             var force_html5_init = false;

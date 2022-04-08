@@ -93,7 +93,11 @@ end
 ---Check if share extention is available https://github.com/britzl/defold-sharing
 ---@return boolean
 function M.is_share_work()
-    return share ~= nil
+    if html5 then
+        return share and html5.run("ShareLog.isNavigatorSupport()") == "true"
+    else
+        return share ~= nil
+    end
 end
 
 return M
