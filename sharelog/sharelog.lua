@@ -75,7 +75,7 @@ end
 ---Share log as file using share extention https://github.com/britzl/defold-sharing
 function M.share_file()
     if html5 and share then
-        share.file(M.get_log(), "text/plain", "sharelog.txt")
+        share.file("sharelog.txt", M.get_log(), {type = "text/plain"})
     elseif share then
         local path = M.save_to_file()
         share.file(path)
