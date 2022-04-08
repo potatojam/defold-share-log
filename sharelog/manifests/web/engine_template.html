@@ -167,36 +167,6 @@
                 }
             }
 
-            ShareLog.isNavigatorAvailable = function () {
-                return navigator && navigator.share;
-            }
-
-            ShareLog.shareText = function () {
-                var shareData = {
-                    text: ShareLog.getDebugInfo()
-                }
-                try {
-                    navigator.share(shareData)
-                } catch (err) {
-                    console.log('Error: ' + err)
-                }
-            }
-
-            ShareLog.shareFile = function (name) {
-                name = (name ? name : 'debugInfo') + '.txt'
-                var shareData = {
-                    files: [new File([strLog], name, {
-                        type: 'text/plain'
-                    })],
-                    title: name
-                }
-                try {
-                    navigator.share(shareData)
-                } catch (err) {
-                    console.log('Error: ' + err)
-                }
-            }
-
             var force_html5_init = false;
             // {{#share_log.force_html5_init}}
             force_html5_init = '{{{share_log.force_html5_init}}}' === 'true' || '{{{share_log.force_html5_init}}}' === '1';
