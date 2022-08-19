@@ -51,7 +51,7 @@ static dmExtension::Result FinalizeShareLog(dmExtension::Params *params)
 
 static std::string string_log;
 
-static void LogListener(dmLog::Severity severity, const char *type, const char *message)
+static void LogListener(LogSeverity severity, const char *type, const char *message)
 {
     // dmLog::LOG_SEVERITY_USER_DEBUG
     string_log = string_log + message;

@@ -4,6 +4,9 @@ The extension writes all output data to the console and makes it possible to rec
 
 ## Installation
 
+> &#x26a0;&#xfe0f; For Defold version below **1.3.5** use Share Log **1.0.0** version
+> https://github.com/potatojam/defold-share-log/archive/refs/tags/1.0.0.zip
+
 You can use it in your own project by adding this project as a [Defold library dependency](http://www.defold.com/manuals/libraries/). Open your `game.project` file and in the dependencies field add **a link to the ZIP file of a [specific release](https://github.com/potatojam/defold-share-log/tags).**
 
 > &#x26a0;&#xfe0f; For some functions, you need to use the [share](https://github.com/britzl/defold-sharing) extension. https://github.com/britzl/defold-sharing
